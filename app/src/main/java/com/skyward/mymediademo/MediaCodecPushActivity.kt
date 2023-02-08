@@ -1,5 +1,6 @@
 package com.skyward.mymediademo
 
+import android.media.AudioFormat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -22,11 +23,11 @@ class MediaCodecPushActivity : AppCompatActivity() {
 
 
         val videoConfiguration = VideoConfiguration.Builder()
-            .setSize(1080, 1920)
+            .setSize(720, 1280)
             .setBps(400, 1300)
-            .setFps(20)
             .build()
-        val audioConfiguration = AudioConfiguration.Builder().build()
+        val audioConfiguration = AudioConfiguration.Builder()
+            .build()
         mPushManager = PushManager(this)
         mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView,true)
 

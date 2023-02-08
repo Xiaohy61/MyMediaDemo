@@ -2,6 +2,7 @@ package com.skyward.nativelivelib.camera2
 
 import android.content.Context
 import android.hardware.camera2.CaptureRequest
+import android.util.Range
 import com.blankj.utilcode.util.LogUtils
 import com.skyward.nativelivelib.utils.ImageUtils
 
@@ -50,6 +51,11 @@ class Camera2Helper(context: Context) : Camera2BaseHelper(context), ICamera2Help
 
     override fun setWb(wb: Int) {
 
+    }
+
+
+    override fun setPreviewFps(fps: Int) {
+        setCameraPreviewFps(fps)
     }
 
 

@@ -43,8 +43,10 @@ class VideoEncoder : BaseEncode {
             videoConfiguration.width,
             videoConfiguration.height
         )
+        format.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible)
         format.setInteger(MediaFormat.KEY_BIT_RATE, videoConfiguration.maxBps * 1024)
         format.setInteger(MediaFormat.KEY_FRAME_RATE, videoConfiguration.fps)
+
         //I帧间隔
         format.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, videoConfiguration.ifi)
 //        format.setInteger(MediaFormat.KEY_PROFILE, MediaCodecInfo.CodecProfileLevel.AVCProfileHigh)
@@ -55,10 +57,6 @@ class VideoEncoder : BaseEncode {
         format.setInteger(
             MediaFormat.KEY_COMPLEXITY,
             MediaCodecInfo.EncoderCapabilities.BITRATE_MODE_CBR
-        )
-        format.setInteger(
-            MediaFormat.KEY_COLOR_FORMAT,
-            MediaCodecInfo.CodecCapabilities.COLOR_FormatYUV420Flexible
         )
         try {
             mediaCodec = MediaCodec.createEncoderByType(videoConfiguration.mime)
@@ -142,7 +140,7 @@ class VideoEncoder : BaseEncode {
             }
             //获取编码输入缓冲区
             val buffer = codec.getOutputBuffer(outIndex) as ByteBuffer
-            LogUtils.i("myLog bufferInfo.size: ${bufferInfo.size} buffer.remaining():  ${buffer.remaining()}")
+//            LogUtils.i("myLog bufferInfo.size: ${bufferInfo.size} buffer.remaining():  ${buffer.remaining()}")
             val outData = ByteArray(bufferInfo.size)
             //缓冲区数据输出到outData
             buffer.get(outData, 0, outData.size)

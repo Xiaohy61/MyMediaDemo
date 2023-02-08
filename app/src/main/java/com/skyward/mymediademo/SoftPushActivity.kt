@@ -1,5 +1,6 @@
 package com.skyward.mymediademo
 
+import android.media.AudioFormat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -23,11 +24,12 @@ class SoftPushActivity : AppCompatActivity() {
 
 
         val videoConfiguration = VideoConfiguration.Builder()
-            .setSize(1080, 1920)
-            .setBps(400, 1300)
-            .setFps(20)
+            .setSize(720, 1280)
+            .setBps(400, 500)
+            .setFps(15)
             .build()
-        val audioConfiguration = AudioConfiguration.Builder().build()
+        val audioConfiguration = AudioConfiguration.Builder()
+            .build()
         mPushManager = PushManager(this)
         mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView,false)
 

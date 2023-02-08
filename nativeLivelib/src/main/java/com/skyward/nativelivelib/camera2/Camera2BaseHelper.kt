@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.util.Log
+import android.util.Range
 import android.util.Size
 import android.view.Surface
 import android.view.SurfaceHolder
@@ -49,7 +50,7 @@ abstract class Camera2BaseHelper(val context: Context) : ICamera2 {
     private lateinit var mPreViewSurface: Surface
     private lateinit var mPreviewBuilder: CaptureRequest.Builder
     private var mOnImageAvailableListener: ImageReader.OnImageAvailableListener? = null
-
+    private var mFps = -1
 
     init {
         cameraManager = context.getSystemService(Context.CAMERA_SERVICE) as CameraManager
@@ -219,6 +220,13 @@ abstract class Camera2BaseHelper(val context: Context) : ICamera2 {
             CaptureRequest.CONTROL_AF_MODE,
             CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
         )
+        if(mFps != -1){
+            mPreviewBuilder.set(
+                CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
+                Range.create(mFps,mFps)
+            )
+        }
+
         //输出到到文件，回调到setOnImageAvailableListener
         mPreviewBuilder.addTarget(mImageReader!!.surface)
 
@@ -257,6 +265,10 @@ abstract class Camera2BaseHelper(val context: Context) : ICamera2 {
     open fun <T> setCameraBuilderMode(key: CaptureRequest.Key<T>, value: T) {
         mPreviewBuilder.set(key, value)
 
+    }
+
+    open fun setCameraPreviewFps(fps:Int){
+        this.mFps = fps
     }
 
 

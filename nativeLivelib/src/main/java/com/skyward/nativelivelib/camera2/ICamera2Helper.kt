@@ -28,6 +28,8 @@ interface ICamera2Helper {
     fun setWb(wb:Int)
 
 
+    fun setPreviewFps(fps:Int)
+
 
 
 }

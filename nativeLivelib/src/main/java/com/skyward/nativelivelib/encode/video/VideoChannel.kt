@@ -38,6 +38,8 @@ class VideoChannel(val context: Context, val pushManager: PushManager) : BaseCha
         mCamera2Helper = Camera2Helper(context)
         mCamera2Helper?.setSurfaceView(mSurfaceView, videoConfig.width, videoConfig.height)
         mCamera2Helper?.openCamera(ICamera2.CameraType.BACK)
+        //这个帧率是控制视频编码的真正帧率
+        mCamera2Helper?.setPreviewFps(videoConfig.fps)
         mCamera2Helper?.setImageAvailableListener(this)
         if(isMediaCodec){
             mVideoEncoder = VideoEncoder()
@@ -54,6 +56,7 @@ class VideoChannel(val context: Context, val pushManager: PushManager) : BaseCha
 
 
     override fun startLive() {
+
         isLiving = true
         mVideoEncoder?.setLiving(isLiving)
         mVideoEncoder?.setPresentationTimeUs(System.currentTimeMillis())

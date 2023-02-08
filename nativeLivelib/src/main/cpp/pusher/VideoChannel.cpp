@@ -86,7 +86,7 @@ void VideoChannel::openVideoCodec(int width, int height, int fps, int bit) {
     pic_in = new x264_picture_t ;
     x264_picture_alloc(pic_in,X264_CSP_I420,width,height);
     isStart = true;
-    LOGI("myLog --- openVideoCodec success ----");
+    LOGI("myLog --- openVideoCodec success ---- fps:  %d",fps);
 
 }
 
