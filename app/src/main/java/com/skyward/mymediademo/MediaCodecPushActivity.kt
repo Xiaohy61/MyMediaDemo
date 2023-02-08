@@ -24,7 +24,7 @@ class MediaCodecPushActivity : AppCompatActivity() {
 
         val videoConfiguration = VideoConfiguration.Builder()
             .setSize(720, 1280)
-            .setBps(400, 1300)
+            .setBps(400, 800)
             .build()
         val audioConfiguration = AudioConfiguration.Builder()
             .build()

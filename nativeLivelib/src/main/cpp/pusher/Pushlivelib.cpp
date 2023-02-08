@@ -146,5 +146,6 @@ Java_com_skyward_nativelivelib_PushLib_pushYuvAndPcmData(JNIEnv *env, jobject th
             }
             break;
     }
+//    LOGI("myLog nav pushYuvAndPcmData type: %d",type);
     env->ReleaseByteArrayElements(data_,data,0);
 }

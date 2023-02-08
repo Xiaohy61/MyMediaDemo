@@ -6,6 +6,7 @@ import android.media.AudioRecord
 import android.media.MediaRecorder
 import android.os.Handler
 import android.os.HandlerThread
+import android.os.Looper
 import android.os.Message
 import android.util.Log
 import com.blankj.utilcode.util.LogUtils
@@ -32,7 +33,23 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
     private var minBufferSize =0
     private val START_LIVE = 100
     private val STOP_LIVE =101
+    private val ENCODING = 102
     private var isMediaCodec = true
+    private val mAudioControlHandler = Handler(
+        Looper.getMainLooper(),
+        Handler.Callback {
+            when(it.what){
+                START_LIVE ->{
+                    isLiving = true
+                    mAudioChannelHandler.obtainMessage(ENCODING).sendToTarget()
+                }
+                STOP_LIVE ->{
+                    isLiving = false
+                    mAudioEncoder?.setLiving(isLiving)
+                }
+            }
+            false
+        })
 
 
 
@@ -65,12 +82,12 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
 
 
     override fun startLive(){
-        mAudioChannelHandler.obtainMessage(START_LIVE).sendToTarget()
+        mAudioControlHandler.obtainMessage(START_LIVE).sendToTarget()
     }
 
 
    override fun stopLive(){
-        mAudioChannelHandler.obtainMessage(STOP_LIVE).sendToTarget()
+       mAudioControlHandler.obtainMessage(STOP_LIVE).sendToTarget()
     }
 
    override fun release(){
@@ -90,7 +107,7 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
 
     override fun handleMessage(msg: Message): Boolean {
         when(msg.what){
-            START_LIVE ->{
+            ENCODING ->{
                 isLiving = true
                 mAudioEncoder?.setLiving(isLiving)
                 mAudioRecord?.startRecording()
@@ -127,16 +144,12 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
                         rtmpPackage.isMediaCodec = false
                         rtmpPackage.buffer = buffer
                         rtmpPackage.type = RTMPPackage.RTMP_PACKET_TYPE_AUDIO_DATA
-//                        LogUtils.i("myLog ---- rtmpPackage buffer ${buffer.size}")
                         addPackage(rtmpPackage)
                     }
 
                 }
             }
-            STOP_LIVE ->{
-                isLiving = false
-                mAudioEncoder?.setLiving(isLiving)
-            }
+
         }
         return false
     }

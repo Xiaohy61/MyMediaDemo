@@ -75,7 +75,7 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
     ) {
         nativeLib.pushInit(isMediaCodec)
         nativeLib.setPushManagerListener(this)
-        //走软编
+        //走软编，初始化软编相关配置信息
         if(!isMediaCodec){
             nativeLib.initVideoCodec(videoConfiguration.width,videoConfiguration.height,
                 videoConfiguration.fps,videoConfiguration.maxBps)
