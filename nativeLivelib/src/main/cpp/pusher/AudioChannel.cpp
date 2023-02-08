@@ -56,7 +56,11 @@ void AudioChannel::encodeData(int32_t *data) {
     if(byteLen > 0){
         RTMPPacket *packet = new RTMPPacket;
         RTMPPacket_Alloc(packet,byteLen+2);
+        //双声道
         packet->m_body[0] = 0xAF;
+        if (mChannels == 1) {
+            packet->m_body[0] = 0xAE;
+        }
         packet->m_body[1] = 0x01;
         memcpy(&packet->m_body[2],mOutputBuffer,byteLen);
         packet->m_hasAbsTimestamp = 0;
@@ -65,28 +69,30 @@ void AudioChannel::encodeData(int32_t *data) {
         packet->m_nChannel = 0x11;
         packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
         //发送
-        if (mAudioCallback)
+        if (mAudioCallback){
             mAudioCallback(packet);
+        }
+
 //        LOGI("myLog ---audio faac encode----");
     }
 }
 
-void AudioChannel::pushAAC(uint8_t *data, int len, long timestamp,int type,int channel) {
+void AudioChannel::pushAAC(uint8_t *data, int len, long timestamp,int type) {
 
-    RTMPPacket *packet = (RTMPPacket *) malloc(sizeof(RTMPPacket));
-    RTMPPacket_Alloc(packet, len);
-    RTMPPacket_Reset(packet);
-    packet->m_nChannel = 0x05; //音频
-    memcpy(packet->m_body, data, len);
-    packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
-    packet->m_hasAbsTimestamp = FALSE;
-    packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
-    packet->m_nBodySize = len;
-    packet->m_nTimeStamp = timestamp;
-    if (mAudioCallback)
+//    RTMPPacket *packet = (RTMPPacket *) malloc(sizeof(RTMPPacket));
+//    RTMPPacket_Alloc(packet, len);
+//    RTMPPacket_Reset(packet);
+//    packet->m_nChannel = 0x05; //音频
+//    memcpy(packet->m_body, data, len);
+//    packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+//    packet->m_hasAbsTimestamp = FALSE;
+//    packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
+//    packet->m_nBodySize = len;
+//    packet->m_nTimeStamp = timestamp;
+    RTMPPacket *packet = createAudioPacket(data, len, type, timestamp);
+    if (mAudioCallback){
         mAudioCallback(packet);
-
-
+    }
 }
 
 /**
@@ -120,6 +126,37 @@ RTMPPacket *AudioChannel::getAudioTag() {
     packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
     return packet;
 }
+
+RTMPPacket *AudioChannel::createAudioPacket(uint8_t *buf, const int len, int type, const long tms) {
+    int bodySize = len +2;
+    RTMPPacket *packet = (RTMPPacket*)malloc(sizeof(RTMPPacket));
+    RTMPPacket_Alloc(packet,bodySize);
+
+    //双声道
+    packet->m_body[0] = 0xAF;
+    //单声道
+    if (mChannels == 1) {
+        packet->m_body[0] = 0xAE;
+    }
+    if(type == 1){
+        //音频头
+        packet->m_body[1] = 0x00;
+        packet->m_nChannel = 0x11;
+    } else{
+        //音频数据
+        packet->m_body[1] = 0x01;
+        packet->m_nChannel = 0x05;
+    }
+    memcpy(&packet->m_body[2],buf,len);
+    packet->m_packetType = RTMP_PACKET_TYPE_AUDIO;
+
+    packet->m_nBodySize = bodySize;
+    packet->m_nTimeStamp = tms;
+    packet->m_hasAbsTimestamp = FALSE;
+    packet->m_headerType = RTMP_PACKET_SIZE_LARGE;
+    return packet;
+}
+
 
 void AudioChannel::release() {
     isStart = false;

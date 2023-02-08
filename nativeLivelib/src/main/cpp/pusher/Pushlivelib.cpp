@@ -93,7 +93,7 @@ Java_com_skyward_nativelivelib_PushLib_pushMediaCodecEncodeData(JNIEnv *env, job
         case 1:
         default:
             //默认先填双声道
-            pushClient->audioChannel->pushAAC(reinterpret_cast<uint8_t *>(encodeData), len, tms,type,2);
+            pushClient->audioChannel->pushAAC(reinterpret_cast<uint8_t *>(encodeData), len, tms,type);
             break;
     }
 

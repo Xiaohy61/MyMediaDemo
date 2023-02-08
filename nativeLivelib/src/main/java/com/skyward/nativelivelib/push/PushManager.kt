@@ -146,7 +146,7 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
                         rtmpPackage.buffer,
                         rtmpPackage.buffer.size,
                         rtmpPackage.tms,
-                        rtmpPackage.type
+                        rtmpPackage.type,
                     )
                 }
 

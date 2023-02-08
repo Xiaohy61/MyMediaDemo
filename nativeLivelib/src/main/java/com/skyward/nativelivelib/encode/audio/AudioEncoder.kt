@@ -1,6 +1,7 @@
 package com.skyward.nativelivelib.encode.audio
 
 import android.media.*
+import com.blankj.utilcode.util.LogUtils
 import com.skyward.nativelivelib.config.AudioConfiguration
 import com.skyward.nativelivelib.encode.base.BaseEncode
 import com.skyward.nativelivelib.encode.base.RtmpPacketListener
@@ -30,8 +31,6 @@ class AudioEncoder: BaseEncode {
         format.setInteger(MediaFormat.KEY_AAC_PROFILE,audioConfig.aacProfile)
         format.setInteger(MediaFormat.KEY_BIT_RATE,audioConfig.maxBps*1024)
         format.setInteger(MediaFormat.KEY_MAX_INPUT_SIZE,minBufferSize)
-        format.setInteger(MediaFormat.KEY_SAMPLE_RATE,audioConfig.sampleRate)
-        format.setInteger(MediaFormat.KEY_CHANNEL_COUNT,audioConfig.channelCount)
         try {
             mediaCodec = MediaCodec.createEncoderByType(audioConfig.mime)
             mediaCodec?.configure(format,null,null,MediaCodec.CONFIGURE_FLAG_ENCODE)
@@ -97,7 +96,7 @@ class AudioEncoder: BaseEncode {
                     mListener?.addPackage(rtmpPackage)
 
                 }
-//                LogUtils.i("myLog ---getEncodeData---outData: ${outData.size}")
+                LogUtils.i("myLog ---getEncodeData---outData: ${outData.size}")
                 //释放资源
                 it.releaseOutputBuffer(outIndex,false)
                 //继续取数据，如果没有返回< 0 就跳出循环

@@ -79,7 +79,7 @@ class VideoChannel(val context: Context, val pushManager: PushManager) : BaseCha
 
 
     override fun onImageAvailable(reader: ImageReader?) {
-//        LogUtils.i("myLog onImageAvailable: isLiving: $isLiving")
+
         reader?.let {
             val image = it.acquireNextImage()
             if(!isLiving){
@@ -92,6 +92,7 @@ class VideoChannel(val context: Context, val pushManager: PushManager) : BaseCha
             val height = it.height
             val stride = planes[0].rowStride
 
+//        LogUtils.i("myLog onImageAvailable: isLiving: $isLiving")
 
 
             if (nv21Rotated == null) {

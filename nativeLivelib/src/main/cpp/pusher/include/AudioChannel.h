@@ -27,8 +27,8 @@ public:
   void openAudioCodec(int sampleHz,int channel);
   int getInputSamples();
   void encodeData(int32_t *data);
-  void pushAAC(uint8_t *data,int len,long timestamp,int type,int channel);
-  RTMPPacket * createAudioPacket(uint8_t *buf,const int len,int type,const long  tms,int channel);
+  void pushAAC(uint8_t *data,int len,long timestamp,int type);
+  RTMPPacket * createAudioPacket(uint8_t *buf,const int len,int type,const long  tms);
   RTMPPacket *getAudioTag();
   void release();
   void setAudioCallback(AudioCallback audioCallback);

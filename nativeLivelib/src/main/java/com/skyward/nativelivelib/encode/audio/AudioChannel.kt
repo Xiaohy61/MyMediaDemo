@@ -36,12 +36,11 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
     private val ENCODING = 102
     private var isMediaCodec = true
     private val mAudioControlHandler = Handler(
-        Looper.getMainLooper(),
+        Looper.myLooper()!!,
         Handler.Callback {
             when(it.what){
                 START_LIVE ->{
-                    isLiving = true
-                    mAudioChannelHandler.obtainMessage(ENCODING).sendToTarget()
+
                 }
                 STOP_LIVE ->{
                     isLiving = false
@@ -82,7 +81,9 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
 
 
     override fun startLive(){
-        mAudioControlHandler.obtainMessage(START_LIVE).sendToTarget()
+//        mAudioControlHandler.obtainMessage(START_LIVE).sendToTarget()
+        isLiving = true
+        mAudioChannelHandler.obtainMessage(ENCODING).sendToTarget()
     }
 
 
