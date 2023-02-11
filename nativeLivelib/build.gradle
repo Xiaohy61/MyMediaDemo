@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 33
 
     defaultConfig {
         minSdk 21
-        targetSdk 31
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -19,7 +19,7 @@ android {
                 cppFlags "-std=c++11"
             }
             ndk {
-                abiFilters  "armeabi-v7a"
+                abiFilters  "armeabi-v7a", "arm64-v8a"
             }
         }
     }
@@ -56,4 +56,14 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     api 'com.blankj:utilcodex:1.30.6'
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3")
+    // CameraX core library
+    def camerax_version = '1.2.1'
+    // def camerax_version = '1.1.0-alpha03'目前最新版，但是为了稳定我们还是选择rc版
+    api "androidx.camera:camera-core:$camerax_version"
+    // CameraX Camera2 extensions[可选]拓展库可实现人像、HDR、夜间和美颜、滤镜但依赖于OEM
+    api "androidx.camera:camera-camera2:$camerax_version"
+    // CameraX Lifecycle library[可选]避免手动在生命周期释放和销毁数据
+    api "androidx.camera:camera-lifecycle:$camerax_version"
+    api "androidx.camera:camera-view:${camerax_version}"
+
 }

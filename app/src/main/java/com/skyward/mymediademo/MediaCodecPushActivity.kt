@@ -4,17 +4,20 @@ import android.media.AudioFormat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.camera.core.Preview
+import androidx.camera.view.PreviewView
 
 import com.skyward.nativelivelib.camera2.AutoFitSurfaceView
 import com.skyward.nativelivelib.camera2.Camera2Helper
 import com.skyward.nativelivelib.config.AudioConfiguration
 import com.skyward.nativelivelib.config.VideoConfiguration
 import com.skyward.nativelivelib.push.PushManager
+import me.xcyoung.opengl.camera.widget.camera.CameraXController
 
 class MediaCodecPushActivity : AppCompatActivity() {
 //    private val url = "rtmp://192.168.0.6:1935/rtmplive/skyward"
 
-    private lateinit var mSurfaceView: AutoFitSurfaceView
+    private lateinit var mSurfaceView: PreviewView
     private lateinit var mPushManager: PushManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,14 +25,20 @@ class MediaCodecPushActivity : AppCompatActivity() {
         mSurfaceView = findViewById(R.id.surfaceView)
 
 
+
         val videoConfiguration = VideoConfiguration.Builder()
             .setSize(720, 1280)
-            .setBps(400, 1300)
+            .setBps(400, 800)
             .build()
         val audioConfiguration = AudioConfiguration.Builder()
             .build()
         mPushManager = PushManager(this)
-        mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView,true)
+
+        mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView.surfaceProvider,true)
+
+//        CameraXController().setUpCamera(this,mSurfaceView.surfaceProvider,videoConfiguration,)
+
+//        mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView,true)
 
 
         findViewById<Button>(R.id.btn_start_push).setOnClickListener {

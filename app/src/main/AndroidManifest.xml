@@ -12,14 +12,14 @@
         <activity
             android:name=".PlayVideoActivity"
             android:exported="false" />
-        <activity
-            android:name=".ScanActivity2"
-            android:exported="false" />
+
         <activity
             android:name=".SoftPushActivity"
+            android:screenOrientation="landscape"
             android:exported="false" />
         <activity
             android:name=".MediaCodecPushActivity"
+
             android:exported="false" />
         <activity
             android:name=".MainActivity"

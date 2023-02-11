@@ -5,6 +5,8 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
 import android.os.Message
+import android.view.View
+import androidx.camera.core.Preview
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.skyward.nativelivelib.PushLib
@@ -70,7 +72,7 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
     fun config(
         videoConfiguration: VideoConfiguration,
         audioConfiguration: AudioConfiguration,
-        autoFitSurfaceView: AutoFitSurfaceView,
+        mSurfaceProvider: Preview.SurfaceProvider,
         isMediaCodec:Boolean
     ) {
         nativeLib.pushInit(isMediaCodec)
@@ -85,7 +87,7 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
         this.mVideoConfiguration = videoConfiguration
         this.mAudioConfiguration = audioConfiguration
         mVideoChannel = VideoChannel(context, this)
-        mVideoChannel.initVideoChannel(videoConfiguration, autoFitSurfaceView,isMediaCodec)
+        mVideoChannel.initVideoChannel(videoConfiguration, mSurfaceProvider,isMediaCodec)
         mAudioChannel = AudioChannel(this)
         mAudioChannel.initAudioChannel(audioConfiguration,isMediaCodec)
 

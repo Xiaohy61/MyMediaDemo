@@ -4,6 +4,7 @@ import android.media.AudioFormat
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.camera.view.PreviewView
 import com.skyward.nativelivelib.camera2.AutoFitSurfaceView
 import com.skyward.nativelivelib.config.AudioConfiguration
 import com.skyward.nativelivelib.config.VideoConfiguration
@@ -13,7 +14,7 @@ import java.io.File
 class SoftPushActivity : AppCompatActivity() {
 //    private val url = "rtmp://192.168.0.6:1935/rtmplive/skyward"
 
-    private lateinit var mSurfaceView: AutoFitSurfaceView
+    private lateinit var mSurfaceView: PreviewView
     private lateinit var mPushManager: PushManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,14 +25,14 @@ class SoftPushActivity : AppCompatActivity() {
 
 
         val videoConfiguration = VideoConfiguration.Builder()
-            .setSize(720, 1280)
+            .setSize(1280, 720)
             .setBps(400, 500)
             .setFps(15)
             .build()
         val audioConfiguration = AudioConfiguration.Builder()
             .build()
         mPushManager = PushManager(this)
-        mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView,false)
+        mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView.surfaceProvider,false)
 
 
         findViewById<Button>(R.id.btn_start_push).setOnClickListener {

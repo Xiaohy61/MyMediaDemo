@@ -5,6 +5,8 @@ import android.graphics.Rect;
 import android.media.Image;
 import android.util.Log;
 
+import androidx.camera.core.ImageProxy;
+
 import com.blankj.utilcode.util.LogUtils;
 
 import java.nio.ByteBuffer;
@@ -23,6 +25,72 @@ public class ImageUtils {
      * @return byte array
      */
     public static byte[] yuv420ToNv21(Image image) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int ySize = width*height;
+        int uvSize = width*height/4;
+
+        byte[] nv21 = new byte[ySize + uvSize*2];
+
+        ByteBuffer yBuffer = image.getPlanes()[0].getBuffer(); // Y
+        ByteBuffer uBuffer = image.getPlanes()[1].getBuffer(); // U
+        ByteBuffer vBuffer = image.getPlanes()[2].getBuffer(); // V
+
+        int rowStride = image.getPlanes()[0].getRowStride();
+        assert(image.getPlanes()[0].getPixelStride() == 1);
+
+        int pos = 0;
+
+        if (rowStride == width) { // likely
+            yBuffer.get(nv21, 0, ySize);
+            pos += ySize;
+        }
+        else {
+            for (; pos<ySize; pos+=width) {
+                yBuffer.get(nv21, pos, width);
+                yBuffer.position(yBuffer.position() + rowStride - width); // skip
+            }
+        }
+
+        rowStride = image.getPlanes()[2].getRowStride();
+        int pixelStride = image.getPlanes()[2].getPixelStride();
+
+        assert(rowStride == image.getPlanes()[1].getRowStride());
+        assert(pixelStride == image.getPlanes()[1].getPixelStride());
+
+        if (pixelStride == 2 && rowStride == width && uBuffer.get(0) == vBuffer.get(1)) {
+            // maybe V an U planes overlap as per NV21, which means vBuffer[1] is alias of uBuffer[0]
+            byte savePixel = vBuffer.get(1);
+            vBuffer.put(1, (byte)0);
+            if (uBuffer.get(0) == 0) {
+                vBuffer.put(1, (byte)255);
+                if (uBuffer.get(0) == 255) {
+                    vBuffer.put(1, savePixel);
+                    vBuffer.get(nv21, ySize, uvSize);
+
+                    return nv21; // shortcut
+                }
+            }
+
+            // unfortunately, the check failed. We must save U and V pixel by pixel
+            vBuffer.put(1, savePixel);
+        }
+
+        // other optimizations could check if (pixelStride == 1) or (pixelStride == 2),
+        // but performance gain would be less significant
+
+        for (int row=0; row<height/2; row++) {
+            for (int col=0; col<width/2; col++) {
+                int vuPos = col*pixelStride + row*rowStride;
+                nv21[pos++] = vBuffer.get(vuPos);
+                nv21[pos++] = uBuffer.get(vuPos);
+            }
+        }
+
+        return nv21;
+    }
+
+    public static byte[] yuv420ToNv21(ImageProxy image) {
         int width = image.getWidth();
         int height = image.getHeight();
         int ySize = width*height;
@@ -246,6 +314,8 @@ public class ImageUtils {
         }
         return data;
     }
+
+
 
 
 
