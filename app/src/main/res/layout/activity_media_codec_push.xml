@@ -7,8 +7,8 @@
     tools:context=".MediaCodecPushActivity">
 
 
-    <androidx.camera.view.PreviewView
-        android:id="@+id/surfaceView"
+    <com.skyward.nativelivelib.camera2.AutoFitSurfaceView
+        android:id="@+id/surfaceView2"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

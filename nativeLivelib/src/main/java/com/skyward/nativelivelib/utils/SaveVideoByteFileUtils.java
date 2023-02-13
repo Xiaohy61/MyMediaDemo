@@ -90,6 +90,26 @@ public class SaveVideoByteFileUtils {
         }
     }
 
+    public static void writeNv21Bytes(byte[] array,String name) {
+        FileOutputStream writer = null;
+        try {
+            // 打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件
+            writer = new FileOutputStream(PathUtils.getExternalAppCachePath() + "/"+name+".yuv", true);
+            writer.write(array, 0, array.length);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public static void savePcm(byte[] array) {
         FileOutputStream writer = null;
         try {

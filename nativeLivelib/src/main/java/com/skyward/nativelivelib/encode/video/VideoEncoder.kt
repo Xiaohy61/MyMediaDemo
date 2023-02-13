@@ -33,9 +33,7 @@ class VideoEncoder : BaseEncode {
     private var presentationTimeUs = System.currentTimeMillis()*1000
     private  val bufferInfo = MediaCodec.BufferInfo()
 
-    constructor(){
-        LogUtils.i("myLog VideoEncoder constructor: size: ${bufferInfo.size}")
-    }
+
 
     fun initVideoEncode(videoConfiguration: VideoConfiguration) {
         val format = MediaFormat.createVideoFormat(
@@ -62,7 +60,6 @@ class VideoEncoder : BaseEncode {
             mediaCodec = MediaCodec.createEncoderByType(videoConfiguration.mime)
             mediaCodec?.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
             mediaCodec?.start()
-
         } catch (e: Exception) {
             ToastUtils.showShort("初始化有误：${e.message}")
             e.printStackTrace()

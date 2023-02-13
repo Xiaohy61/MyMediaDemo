@@ -1,8 +1,8 @@
 package com.skyward.nativelivelib.utils;
 
 import android.annotation.SuppressLint;
+import android.media.Image;
 
-import androidx.camera.core.ImageProxy;
 
 
 import com.skyward.nativelivelib.YuvLib;
@@ -18,8 +18,17 @@ public class ConvertUtils {
     private static byte[] mPortraitYUV;
     private static byte[] mLandscapeYUV;
 
-    public static byte[] YUV_420_888toNV12(ImageProxy image, int rotation) {
-        if (0 == rotation) {
+    private static ByteBuffer yOut;
+    private static ByteBuffer uOut;
+    private static ByteBuffer vOut;
+
+    private static int yStride;
+    private static int uStride;
+    private static int vStride;
+
+
+    public static byte[] YUV_420_888toNV12(Image image, int rotation) {
+        if (90 == rotation) {
             return YUV_420_888toPortraitNV12(image, rotation);
         } else {
             return YUV_420_888toLandscapeNV12(image, rotation);
@@ -33,8 +42,8 @@ public class ConvertUtils {
      * @return nv12 byte array
      */
     @SuppressLint("UnsafeOptInUsageError")
-    public static byte[] YUV_420_888toLandscapeNV12(ImageProxy image, int rotation) {
-        byte [] bytes = YuvLib.convertToI420(image.getImage()).asArray();
+    public static byte[] YUV_420_888toLandscapeNV12(Image image, int rotation) {
+        byte [] bytes = YuvLib.convertToI420(image).asArray();
         if (null == mLandscapeYUV || mLandscapeYUV.length != bytes.length) {
             mLandscapeYUV = new byte[bytes.length];
         }
@@ -49,51 +58,28 @@ public class ConvertUtils {
      * @return nv12 byte array
      */
     @SuppressLint("UnsafeOptInUsageError")
-    public static byte[] YUV_420_888toPortraitNV12(ImageProxy image, int rotation) {
-        YuvFrame yuvFrame = YuvLib.convertToI420(image.getImage());
+    public static byte[] YUV_420_888toPortraitNV12(Image image, int rotation) {
+        YuvFrame yuvFrame = YuvLib.convertToI420(image);
+
         //TODO optimization of vertical screen libyuv rotation
-        byte[] bytes = YuvLib.rotate(yuvFrame, image.getImageInfo().getRotationDegrees()).asArray();
+        byte[] bytes = YuvLib.rotate(yuvFrame, rotation).asArray();
+//        SaveVideoByteFileUtils.writeNv21Bytes(bytes);
         if (null == mPortraitYUV || mPortraitYUV.length != bytes.length) {
             mPortraitYUV = new byte[bytes.length];
         }
         YuvLib.I420ToNV12(bytes, image.getWidth(), image.getHeight(), mPortraitYUV);
+//        SaveVideoByteFileUtils.writeNv21Bytes(mPortraitYUV,"codec2");
         return mPortraitYUV;
     }
 
-    private static void writeFile(ImageProxy mImage, String path) {
-        File file = new File(path);
-        FileOutputStream output = null;
-        ByteBuffer buffer;
-        byte[] bytes;
-        ByteBuffer prebuffer = ByteBuffer.allocate(16);
-        prebuffer.putInt(mImage.getWidth())
-                .putInt(mImage.getHeight())
-                .putInt(mImage.getPlanes()[1].getPixelStride())
-                .putInt(mImage.getPlanes()[1].getRowStride());
 
-        try {
-            output = new FileOutputStream(file);
-            output.write(prebuffer.array()); // write meta information to file
-            // Now write the actual planes.
-            for (int i = 0; i < 3; i++) {
-                buffer = mImage.getPlanes()[i].getBuffer();
-                bytes = new byte[buffer.remaining()]; // makes byte array large enough to hold image
-                buffer.get(bytes); // copies image from buffer to byte array
-                output.write(bytes);    // write the byte array to file
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-//            mImage.close(); // close this to free up buffer for other images
-            if (null != output) {
-                try {
-                    output.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+
+
+    @SuppressLint("UnsafeOptInUsageError")
+    public static byte[] YUV_420_888toI420(Image image, int rotation) {
+        YuvFrame yuvFrame = YuvLib.convertToI420(image);
+        return YuvLib.rotate(yuvFrame, rotation).asArray();
     }
+
+
 }

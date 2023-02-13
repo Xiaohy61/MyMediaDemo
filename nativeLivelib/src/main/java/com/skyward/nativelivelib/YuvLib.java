@@ -10,10 +10,10 @@ public class YuvLib {
     private static YuvFrame mYuvFrame;
     private static ByteBuffer y, u, v;
 
-    static {
-        System.loadLibrary("yuvlib");
-    }
 
+    static {
+        System.loadLibrary("pushlivelib");
+    }
 
 
     public static YuvFrame createYuvFrame(int width, int height) {
@@ -65,7 +65,17 @@ public class YuvLib {
 
     public static YuvFrame convertToI420(Image image) {
         YuvFrame outFrame = createYuvFrame(image.getWidth(), image.getHeight());
-        convertToI420(image.getPlanes()[0].getBuffer(), image.getPlanes()[1].getBuffer(), image.getPlanes()[2].getBuffer(), image.getPlanes()[0].getRowStride(), image.getPlanes()[1].getRowStride(), image.getPlanes()[2].getRowStride(), image.getPlanes()[2].getPixelStride(), outFrame.getY(), outFrame.getU(), outFrame.getV(), outFrame.getyStride(), outFrame.getuStride(), outFrame.getvStride(), image.getWidth(), image.getHeight());
+        convertToI420(
+                image.getPlanes()[0].getBuffer(),
+                image.getPlanes()[1].getBuffer(),
+                image.getPlanes()[2].getBuffer(),
+                image.getPlanes()[0].getRowStride(),
+                image.getPlanes()[1].getRowStride(),
+                image.getPlanes()[2].getRowStride(),
+                image.getPlanes()[2].getPixelStride(),
+                outFrame.getY(), outFrame.getU(), outFrame.getV(), outFrame.getyStride(),
+                outFrame.getuStride(), outFrame.getvStride(),
+                image.getWidth(), image.getHeight());
         return outFrame;
     }
 
@@ -77,7 +87,14 @@ public class YuvLib {
 
     public static native void rotate(ByteBuffer y, ByteBuffer u, ByteBuffer v, int yStride, int uStride, int vStride, ByteBuffer yOut, ByteBuffer uOut, ByteBuffer vOut, int yOutStride, int uOutStride, int vOutStride, int width, int height, int rotationMode);
 
-    public static native void convertToI420(ByteBuffer y, ByteBuffer u, ByteBuffer v, int yStride, int uStride, int vStride, int srcPixelStrideUv, ByteBuffer yOut, ByteBuffer uOut, ByteBuffer vOut, int yOutStride, int uOutStride, int vOutStride, int width, int height);
+    public static native void convertToI420(ByteBuffer y, ByteBuffer u, ByteBuffer v, int yStride, int uStride,
+                                            int vStride, int srcPixelStrideUv, ByteBuffer yOut, ByteBuffer uOut,
+                                            ByteBuffer vOut, int yOutStride, int uOutStride, int vOutStride,
+                                            int width, int height);
+
+
 
     public static native void I420ToNV12(byte[] i420Src, int width, int height, byte[] nv12Dst);
+
+    public static native void NV21ToI420(byte[] nv21,int width,int height,byte[] i420);
 }

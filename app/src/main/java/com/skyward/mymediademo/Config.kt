@@ -7,5 +7,9 @@ package com.skyward.mymediademo
  *
  **/
 object Config {
-    val url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_514567206_71926781&key=23aad5b8b2ae91730ad4ca27f026257f&schedule=rtmp&pflag=1"
+//    val url = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_514567206_71926781&key=23aad5b8b2ae91730ad4ca27f026257f&schedule=rtmp&pflag=1"
+    val url = "rtmp://192.168.0.11/rtmplive/skyward"
+
+    var width = 720
+    var height =1280
 }

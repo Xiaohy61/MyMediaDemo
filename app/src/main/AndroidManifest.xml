@@ -15,11 +15,11 @@
 
         <activity
             android:name=".SoftPushActivity"
-            android:screenOrientation="landscape"
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".MediaCodecPushActivity"
-
+            android:screenOrientation="portrait"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

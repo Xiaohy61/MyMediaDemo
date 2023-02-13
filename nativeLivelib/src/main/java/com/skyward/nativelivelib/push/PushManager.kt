@@ -6,7 +6,7 @@ import android.os.HandlerThread
 import android.os.Looper
 import android.os.Message
 import android.view.View
-import androidx.camera.core.Preview
+
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.skyward.nativelivelib.PushLib
@@ -51,8 +51,9 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
                     nativeLib.startPush(mUrl)
                 }
                 START_PUSH -> {
-                    LogUtils.i("myLog handleMessage START_PUSH isLiving: $isLiving ${it.what}")
+
                     isLiving = true
+                    LogUtils.i("myLog handleMessage START_PUSH isLiving: $isLiving ${it.what}")
                     mVideoChannel.startLive()
                     mAudioChannel.startLive()
                 }
@@ -68,11 +69,10 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
         })
 
 
-
     fun config(
         videoConfiguration: VideoConfiguration,
         audioConfiguration: AudioConfiguration,
-        mSurfaceProvider: Preview.SurfaceProvider,
+        mSurfaceView: AutoFitSurfaceView,
         isMediaCodec:Boolean
     ) {
         nativeLib.pushInit(isMediaCodec)
@@ -87,11 +87,9 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
         this.mVideoConfiguration = videoConfiguration
         this.mAudioConfiguration = audioConfiguration
         mVideoChannel = VideoChannel(context, this)
-        mVideoChannel.initVideoChannel(videoConfiguration, mSurfaceProvider,isMediaCodec)
+        mVideoChannel.initVideoChannel(videoConfiguration, mSurfaceView,isMediaCodec)
         mAudioChannel = AudioChannel(this)
         mAudioChannel.initAudioChannel(audioConfiguration,isMediaCodec)
-
-
     }
 
     fun getAudioInputByteNum():Int{
@@ -117,6 +115,7 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
         mPushRtmpHandler.removeCallbacksAndMessages(null)
         mPushControlHandler.removeCallbacksAndMessages(null)
         mPushRtmpHandlerThread.quit()
+        queue.clear()
     }
 
 
@@ -182,7 +181,7 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
     }
 
     override fun handleMessage(msg: Message): Boolean {
-//        LogUtils.i("myLog handleMessage msg.what: ${msg.what} id: ${Thread.currentThread().name}")
+        LogUtils.i("myLog handleMessage msg.what: ${msg.what} id: ${Thread.currentThread().name}")
         when (msg.what) {
             PUSH_ENCODE_DATA -> {
                 pushEncodeData()

@@ -121,15 +121,23 @@ void VideoChannel::onEncoder() {
             LOGI("myLog 获取yuv数据为空");
             continue;
         }
+
+        //void* memcpy(void* const dst __pass_object_size0, const void* src, size_t copy_amount)
+        //第一个参数是拷贝数据的接受容器，第二个参数是拷贝的源数据，第三个参数是拷贝的数据有多长
         //copy Y数据
         memcpy(this->pic_in->img.plane[0],data,mY_Size);
+        //copy u数据  拷贝u数据，指针地址要偏移从 data+mY_Size 开始是u数据
+        memcpy(this->pic_in->img.plane[1],data+mY_Size,mUV_Size);
+//        //copy v数据
+        memcpy(this->pic_in->img.plane[2],data+mY_Size+mUV_Size,mUV_Size);
+
         //获取uv数据  nv21: yyyyyyyyvuvuvu 偶数位v 奇数位u
-        for (int i =0;i < mUV_Size;i++){
-            //获取u数据 奇数位
-            *(pic_in->img.plane[1]+i) = *(data+mY_Size+i*2+1);
-            //拿到v数据 偶数位
-            *(pic_in->img.plane[2]+i) =*(data+mY_Size+i*2);
-        }
+//        for (int i =0;i < mUV_Size;i++){
+//            //获取u数据 奇数位
+//            *(pic_in->img.plane[1]+i) = *(data+mY_Size+i*2+1);
+//            //拿到v数据 偶数位
+//            *(pic_in->img.plane[2]+i) =*(data+mY_Size+i*2);
+//        }
         //编码出来的数据
         x264_nal_t *pp_nal;
         //编码出来的帧数量

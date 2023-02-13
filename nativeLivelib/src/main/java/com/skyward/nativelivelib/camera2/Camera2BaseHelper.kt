@@ -13,6 +13,7 @@ import android.util.Range
 import android.util.Size
 import android.view.Surface
 import android.view.SurfaceHolder
+import android.view.WindowManager
 import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.skyward.nativelivelib.config.VideoConfiguration
@@ -147,8 +148,6 @@ abstract class Camera2BaseHelper(val context: Context) : ICamera2 {
             maxImages
         )
 
-
-
         mOnImageAvailableListener?.let {
             mImageReader?.setOnImageAvailableListener(it, imageReaderHandler)
         }
@@ -220,10 +219,10 @@ abstract class Camera2BaseHelper(val context: Context) : ICamera2 {
             CaptureRequest.CONTROL_AF_MODE,
             CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE
         )
-        if(mFps != -1){
+        if (mFps != -1) {
             mPreviewBuilder.set(
                 CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
-                Range.create(mFps,mFps)
+                Range.create(mFps, mFps)
             )
         }
 
@@ -267,9 +266,10 @@ abstract class Camera2BaseHelper(val context: Context) : ICamera2 {
 
     }
 
-    open fun setCameraPreviewFps(fps:Int){
+    open fun setCameraPreviewFps(fps: Int) {
         this.mFps = fps
     }
+
 
 
     override fun closeCamera() {

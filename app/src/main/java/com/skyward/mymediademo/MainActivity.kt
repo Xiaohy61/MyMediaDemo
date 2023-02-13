@@ -6,17 +6,19 @@ import android.content.pm.PackageManager
 import android.os.*
 import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
+import androidx.appcompat.widget.SwitchCompat
 import com.blankj.utilcode.util.LogUtils
 
 class MainActivity : AppCompatActivity() {
     private val url = "rtmp://192.168.0.6:1935/rtmplive/skyward"
-
+    private lateinit var screenDirection:SwitchCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+          screenDirection = findViewById(R.id.screen_direction)
 
-
+        screenDirection.isChecked = Config.width > Config.height
 
 
 //        val nativeLib = PushLib()
@@ -33,9 +35,21 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        findViewById<Button>(R.id.btnPlay).setOnClickListener {
-            val intent = Intent(applicationContext,PlayVideoActivity::class.java)
-            startActivity(intent)
+//        findViewById<Button>(R.id.btnPlay).setOnClickListener {
+//            val intent = Intent(applicationContext,PlayVideoActivity::class.java)
+//            startActivity(intent)
+//        }
+
+        screenDirection.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                screenDirection.text = "横屏"
+            }else{
+                screenDirection.text = "竖屏"
+            }
+            val tempWidth = Config.width
+            Config.width = Config.height
+            Config.height = tempWidth
+            LogUtils.i("myLog width: ${Config.width} height: ${Config.height}")
         }
 
 

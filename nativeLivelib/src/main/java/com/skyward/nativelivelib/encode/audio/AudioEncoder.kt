@@ -96,7 +96,7 @@ class AudioEncoder: BaseEncode {
                     mListener?.addPackage(rtmpPackage)
 
                 }
-                LogUtils.i("myLog ---getEncodeData---outData: ${outData.size}")
+//                LogUtils.i("myLog ---getEncodeData---outData: ${outData.size}")
                 //释放资源
                 it.releaseOutputBuffer(outIndex,false)
                 //继续取数据，如果没有返回< 0 就跳出循环
