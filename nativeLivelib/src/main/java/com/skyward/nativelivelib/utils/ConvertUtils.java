@@ -6,6 +6,7 @@ import android.media.Image;
 
 
 import com.skyward.nativelivelib.YuvLib;
+import com.skyward.nativelivelib.camera2.ICamera2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -18,20 +19,20 @@ public class ConvertUtils {
     private static byte[] mPortraitYUV;
     private static byte[] mLandscapeYUV;
 
-    private static ByteBuffer yOut;
-    private static ByteBuffer uOut;
-    private static ByteBuffer vOut;
 
-    private static int yStride;
-    private static int uStride;
-    private static int vStride;
-
-
-    public static byte[] YUV_420_888toNV12(Image image, int rotation) {
-        if (90 == rotation) {
-            return YUV_420_888toPortraitNV12(image, rotation);
-        } else {
-            return YUV_420_888toLandscapeNV12(image, rotation);
+    public static byte[] YUV_420_888toNV12(Image image, int rotation, ICamera2.CameraType cameraType) {
+        if(cameraType == ICamera2.CameraType.BACK){
+            if (90 == rotation) {
+                return YUV_420_888toPortraitNV12(image, rotation);
+            } else {
+                return YUV_420_888toLandscapeNV12(image, rotation);
+            }
+        }else {
+            if (270 == rotation) {
+                return YUV_420_888toPortraitNV12(image, rotation);
+            } else {
+                return YUV_420_888toLandscapeNV12(image, rotation);
+            }
         }
     }
 
@@ -71,6 +72,7 @@ public class ConvertUtils {
 //        SaveVideoByteFileUtils.writeNv21Bytes(mPortraitYUV,"codec2");
         return mPortraitYUV;
     }
+
 
 
 

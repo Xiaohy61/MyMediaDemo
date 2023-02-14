@@ -11,6 +11,7 @@ import com.blankj.utilcode.util.LogUtils
 import com.blankj.utilcode.util.ToastUtils
 import com.skyward.nativelivelib.PushLib
 import com.skyward.nativelivelib.camera2.AutoFitSurfaceView
+import com.skyward.nativelivelib.camera2.ICamera2
 import com.skyward.nativelivelib.config.AudioConfiguration
 import com.skyward.nativelivelib.config.VideoConfiguration
 import com.skyward.nativelivelib.encode.base.RtmpPacketListener
@@ -73,7 +74,8 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
         videoConfiguration: VideoConfiguration,
         audioConfiguration: AudioConfiguration,
         mSurfaceView: AutoFitSurfaceView,
-        isMediaCodec:Boolean
+        isMediaCodec:Boolean,
+        cameraType: ICamera2.CameraType = ICamera2.CameraType.BACK
     ) {
         nativeLib.pushInit(isMediaCodec)
         nativeLib.setPushManagerListener(this)
@@ -87,7 +89,7 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
         this.mVideoConfiguration = videoConfiguration
         this.mAudioConfiguration = audioConfiguration
         mVideoChannel = VideoChannel(context, this)
-        mVideoChannel.initVideoChannel(videoConfiguration, mSurfaceView,isMediaCodec)
+        mVideoChannel.initVideoChannel(videoConfiguration, mSurfaceView,isMediaCodec,cameraType)
         mAudioChannel = AudioChannel(this)
         mAudioChannel.initAudioChannel(audioConfiguration,isMediaCodec)
     }
@@ -181,7 +183,7 @@ class PushManager(val context: Context) : Handler.Callback, RtmpPacketListener, 
     }
 
     override fun handleMessage(msg: Message): Boolean {
-        LogUtils.i("myLog handleMessage msg.what: ${msg.what} id: ${Thread.currentThread().name}")
+//        LogUtils.i("myLog handleMessage msg.what: ${msg.what} id: ${Thread.currentThread().name}")
         when (msg.what) {
             PUSH_ENCODE_DATA -> {
                 pushEncodeData()

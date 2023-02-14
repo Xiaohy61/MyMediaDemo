@@ -2,6 +2,8 @@ package com.skyward.nativelivelib.utils;
 
 import android.media.Image;
 
+import com.blankj.utilcode.util.LogUtils;
+
 import java.nio.ByteBuffer;
 
 public class YuvFrame {
@@ -17,8 +19,22 @@ public class YuvFrame {
     private int width;
     private int height;
 
+    private ByteBuffer combineBuffer;
+
     public YuvFrame() {
         super();
+    }
+
+    public  YuvFrame(ByteBuffer y, ByteBuffer u, ByteBuffer v, int yStride, int uStride, int vStride, int width, int height) {
+        this.y = y;
+        this.u = u;
+        this.v = v;
+        this.yStride = yStride;
+        this.uStride = uStride;
+        this.vStride = vStride;
+        this.width = width;
+        this.height = height;
+        combineBuffer = ByteBuffer.allocate(y.capacity() + u.capacity() + v.capacity());
     }
 
     public void fill(ByteBuffer y, ByteBuffer u, ByteBuffer v, int yStride, int uStride, int vStride, int width, int height) {
@@ -90,12 +106,17 @@ public class YuvFrame {
         int vPos = v.position();
 
         try {
-            array = ByteBuffer.allocate(y.capacity() + u.capacity() + v.capacity()).put(y).put(u).put(v).array();
+//            array = ByteBuffer.allocate(y.capacity() + u.capacity() + v.capacity()).put(y).put(u).put(v).array();
+            combineBuffer.clear();
+            combineBuffer.put(y).put(u).put(v);
+            array = combineBuffer.array();
+
             y.position(yPos);
             u.position(uPos);
             v.position(vPos);
         } catch (Exception e) {
 
+            LogUtils.i("myLog --------"+e.getMessage());
             array = new byte[size()];
 
             y.get(array, 0, y.remaining());

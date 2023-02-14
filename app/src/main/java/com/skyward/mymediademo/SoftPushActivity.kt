@@ -38,7 +38,8 @@ class SoftPushActivity : AppCompatActivity() {
         val audioConfiguration = AudioConfiguration.Builder()
             .build()
         mPushManager = PushManager(this)
-        mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView,false)
+        mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView,false,
+            Config.cameraType)
 
 
         findViewById<Button>(R.id.btn_start_push).setOnClickListener {

@@ -3,6 +3,7 @@ package com.skyward.nativelivelib.ext
 import android.content.Context
 import android.view.Surface
 import android.view.WindowManager
+import com.skyward.nativelivelib.camera2.ICamera2
 
 /**
  * @author skyward
@@ -11,10 +12,23 @@ import android.view.WindowManager
  *
  **/
 
-fun Context.getCameraRotation():Int{
+fun Context.getCameraRotation(cameraType: ICamera2.CameraType):Int{
     val rotation = when ((getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay.rotation) {
-        Surface.ROTATION_0 ,Surface.ROTATION_180-> 90
-        Surface.ROTATION_90 ,Surface.ROTATION_270 -> 0
+        Surface.ROTATION_0 ,Surface.ROTATION_180-> {
+            if(cameraType == ICamera2.CameraType.BACK){
+                90
+            }else{
+                270
+            }
+        }
+        Surface.ROTATION_90 ,Surface.ROTATION_270 ->{
+            if(cameraType == ICamera2.CameraType.BACK){
+                0
+            }else{
+                180
+            }
+
+        }
         else -> {
             90
         }

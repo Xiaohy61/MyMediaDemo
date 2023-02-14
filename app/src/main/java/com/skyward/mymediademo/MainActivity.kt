@@ -8,15 +8,18 @@ import androidx.appcompat.app.AppCompatActivity
 import android.widget.Button
 import androidx.appcompat.widget.SwitchCompat
 import com.blankj.utilcode.util.LogUtils
+import com.skyward.nativelivelib.camera2.ICamera2
 
 class MainActivity : AppCompatActivity() {
     private val url = "rtmp://192.168.0.6:1935/rtmplive/skyward"
     private lateinit var screenDirection:SwitchCompat
+    private lateinit var cameraType:SwitchCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
           screenDirection = findViewById(R.id.screen_direction)
+        cameraType = findViewById(R.id.camera_type)
 
         screenDirection.isChecked = Config.width > Config.height
 
@@ -50,6 +53,17 @@ class MainActivity : AppCompatActivity() {
             Config.width = Config.height
             Config.height = tempWidth
             LogUtils.i("myLog width: ${Config.width} height: ${Config.height}")
+        }
+
+        cameraType.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                cameraType.text ="前摄"
+                Config.cameraType = ICamera2.CameraType.FRONT
+            }else{
+                cameraType.text ="后摄"
+                Config.cameraType = ICamera2.CameraType.BACK
+            }
+
         }
 
 

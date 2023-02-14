@@ -43,7 +43,8 @@ class MediaCodecPushActivity : AppCompatActivity() {
 
 //        CameraXController().setUpCamera(this,mSurfaceView.surfaceProvider,videoConfiguration,)
 
-        mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView2,true)
+        mPushManager.config(videoConfiguration,audioConfiguration,mSurfaceView2,true,
+        Config.cameraType)
 
 
         findViewById<Button>(R.id.btn_start_push).setOnClickListener {

@@ -32,6 +32,7 @@ class VideoEncoder : BaseEncode {
     private var mListener: RtmpPacketListener? = null
     private var presentationTimeUs = System.currentTimeMillis()*1000
     private  val bufferInfo = MediaCodec.BufferInfo()
+    private var rtmpPackage :RTMPPackage? = null
 
 
 
@@ -143,10 +144,19 @@ class VideoEncoder : BaseEncode {
             buffer.get(outData, 0, outData.size)
 
             //封装数据到package
-            val rtmpPackage =
-                RTMPPackage(outData, bufferInfo.presentationTimeUs / 1000 - startTime,true)
-            rtmpPackage.type = RTMPPackage.RTMP_PACKET_TYPE_VIDEO
-            mListener?.addPackage(rtmpPackage)
+
+            if(rtmpPackage == null){
+                rtmpPackage = RTMPPackage()
+            }
+            rtmpPackage?.let { pack ->
+                pack.isMediaCodec = true
+                pack.buffer = outData
+                pack.tms = bufferInfo.presentationTimeUs / 1000 - startTime
+                pack.type = RTMPPackage.RTMP_PACKET_TYPE_VIDEO
+//                LogUtils.i("myLog --- rtmpPackage.buffer: ${rtmpPackage.buffer.size} ")
+                mListener?.addPackage(pack)
+            }
+
 //            SaveVideoByteFileUtils.writeContent(outData)
 //            SaveVideoByteFileUtils.writeBytes(outData)
 

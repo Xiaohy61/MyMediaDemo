@@ -23,7 +23,7 @@ class AudioEncoder: BaseEncode {
     private var mediaCodecInfo = MediaCodec.BufferInfo()
     private var startTime:Long = 0
     private var presentationTimeUs = System.currentTimeMillis()*1000
-
+    private var rtmpPackage :RTMPPackage? = null
 
 
     fun initAudioEncoder(audioConfig: AudioConfiguration,minBufferSize:Int){
@@ -90,11 +90,17 @@ class AudioEncoder: BaseEncode {
                         startTime = mediaCodecInfo.presentationTimeUs/1000
                     }
                     //封装数据到package
-                    val rtmpPackage =
-                        RTMPPackage(outData, mediaCodecInfo.presentationTimeUs / 1000 - startTime,true)
-                    rtmpPackage.type = RTMPPackage.RTMP_PACKET_TYPE_AUDIO_DATA
-                    mListener?.addPackage(rtmpPackage)
-
+                    if(rtmpPackage == null){
+                        rtmpPackage = RTMPPackage()
+                    }
+                    rtmpPackage?.let { pack ->
+                        pack.isMediaCodec = true
+                        pack.buffer = outData
+                        pack.tms = mediaCodecInfo.presentationTimeUs / 1000 - startTime
+                        pack.type = RTMPPackage.RTMP_PACKET_TYPE_AUDIO_DATA
+//                LogUtils.i("myLog --- rtmpPackage.buffer: ${rtmpPackage.buffer.size} ")
+                        mListener?.addPackage(pack)
+                    }
                 }
 //                LogUtils.i("myLog ---getEncodeData---outData: ${outData.size}")
                 //释放资源

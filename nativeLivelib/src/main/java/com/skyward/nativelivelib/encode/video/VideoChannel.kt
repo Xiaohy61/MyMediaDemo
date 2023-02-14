@@ -37,15 +37,19 @@ class VideoChannel(val context: Context, val pushManager: PushManager) : BaseCha
     private  var mVideoEncoder: VideoEncoder? = null
     private val reentrantLock = ReentrantLock()
     private var isMediaCodec = true
+    private var rtmpPackage :RTMPPackage? = null
+    private var cameraType = ICamera2.CameraType.BACK
 
 
 
-    fun initVideoChannel(videoConfig: VideoConfiguration, mSurfaceView: AutoFitSurfaceView, isMediaCodec: Boolean) {
+    fun initVideoChannel(videoConfig: VideoConfiguration, mSurfaceView: AutoFitSurfaceView,
+                         isMediaCodec: Boolean,cameraType: ICamera2.CameraType = ICamera2.CameraType.BACK) {
         this.isMediaCodec = isMediaCodec
+        this.cameraType = cameraType
         mCamera2Helper = Camera2Helper(context)
 //
         mCamera2Helper?.setSurfaceView(mSurfaceView, videoConfig.width, videoConfig.height)
-        mCamera2Helper?.openCamera(ICamera2.CameraType.BACK)
+        mCamera2Helper?.openCamera(cameraType)
 
 
         //这个帧率是控制视频编码的真正帧率
@@ -102,15 +106,14 @@ class VideoChannel(val context: Context, val pushManager: PushManager) : BaseCha
 
 
             if(isMediaCodec){
-               val nv12 =  ConvertUtils.YUV_420_888toNV12(image,context.getCameraRotation())
+               val nv12 =  ConvertUtils.YUV_420_888toNV12(image,context.getCameraRotation(cameraType),cameraType)
                 mVideoEncoder?.encode(nv12,timestamp)
             }else{
-                val i420 = ConvertUtils.YUV_420_888toI420(image,context.getCameraRotation())
-                var rtmpPackage :RTMPPackage? = null
+                val i420 = ConvertUtils.YUV_420_888toI420(image,context.getCameraRotation(cameraType))
                 if(rtmpPackage == null){
                     rtmpPackage = RTMPPackage()
                 }
-                rtmpPackage.let { pack ->
+                rtmpPackage?.let { pack ->
                     pack.isMediaCodec = false
                     pack.buffer = i420
                     pack.type = RTMPPackage.RTMP_PACKET_TYPE_VIDEO

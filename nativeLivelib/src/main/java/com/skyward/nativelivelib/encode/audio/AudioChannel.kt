@@ -35,12 +35,16 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
     private val STOP_LIVE =101
     private val ENCODING = 102
     private var isMediaCodec = true
+    private var rtmpPackage :RTMPPackage? = null
     private val mAudioControlHandler = Handler(
         Looper.myLooper()!!,
         Handler.Callback {
             when(it.what){
                 START_LIVE ->{
-
+                    isLiving = true
+                    //先发送音频头信息
+                    mAudioEncoder?.sendAudioHeader()
+                    mAudioChannelHandler.obtainMessage(ENCODING).sendToTarget()
                 }
                 STOP_LIVE ->{
                     isLiving = false
@@ -81,9 +85,8 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
 
 
     override fun startLive(){
-//        mAudioControlHandler.obtainMessage(START_LIVE).sendToTarget()
-        isLiving = true
-        mAudioChannelHandler.obtainMessage(ENCODING).sendToTarget()
+
+        mAudioControlHandler.obtainMessage(START_LIVE).sendToTarget()
     }
 
 
@@ -109,7 +112,6 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
     override fun handleMessage(msg: Message): Boolean {
         when(msg.what){
             ENCODING ->{
-                isLiving = true
                 mAudioEncoder?.setLiving(isLiving)
                 mAudioRecord?.startRecording()
 
@@ -120,8 +122,8 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
                 }
 //                LogUtils.i("myLog buffer: ${buffer.size} minBufferSize: $minBufferSize")
                 if(isMediaCodec){
-                    //先发送音频头信息
-                    mAudioEncoder?.sendAudioHeader()
+//                    //先发送音频头信息
+//                    mAudioEncoder?.sendAudioHeader()
                     mAudioEncoder?.setPresentationTimeUs(System.currentTimeMillis())
                 }
                 while (isLiving){
@@ -141,11 +143,16 @@ class AudioChannel(val pushManager: PushManager): BaseChannel, RtmpPacketListene
                     }else{
 //                        SaveVideoByteFileUtils.savePcm(buffer)
                         //软编pcm数据回调
-                        val rtmpPackage = RTMPPackage()
-                        rtmpPackage.isMediaCodec = false
-                        rtmpPackage.buffer = buffer
-                        rtmpPackage.type = RTMPPackage.RTMP_PACKET_TYPE_AUDIO_DATA
-                        addPackage(rtmpPackage)
+                        if(rtmpPackage == null){
+                            rtmpPackage = RTMPPackage()
+                        }
+                        rtmpPackage?.let { pack ->
+                            pack.isMediaCodec = false
+                            pack.buffer = buffer
+                            pack.type = RTMPPackage.RTMP_PACKET_TYPE_AUDIO_DATA
+//                LogUtils.i("myLog --- rtmpPackage.buffer: ${rtmpPackage.buffer.size} ")
+                            addPackage(pack)
+                        }
                     }
 
                 }
